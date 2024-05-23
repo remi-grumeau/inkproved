@@ -1,0 +1,14 @@
+#ink__story p.babylonjs {
+}
+#ink__story p.babylonjs babylon {
+    position:   relative;
+    display:    block;
+    width:      100%;
+    height:     15em;
+    background: #ccc;
+}
+#ink__story p.babylonjs babylon model {
+    display:    block;
+    width:      100%;
+    height:     100%;
+}
