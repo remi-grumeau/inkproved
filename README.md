@@ -3,5 +3,4 @@ Yet another version of the [Inky editor](https://www.inklestudios.com/ink/) web 
 
 See [examples](https://github.com/remi-grumeau/inkproved/tree/main/examples) for more info.
 
-*Check the [official Inkle Ink tools collection](https://github.com/inkle/ink-library/) for any other languages*
-*For NodeJS/React lovers, you should give [Atrament Preact](https://github.com/technix/atrament-preact-ui) a look*
+*Check the [official Inkle Ink tools collection](https://github.com/inkle/ink-library/) for any other languages. For NodeJS/React lovers, you should give [Atrament Preact](https://github.com/technix/atrament-preact-ui) a look*
