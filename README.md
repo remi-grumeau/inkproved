@@ -12,5 +12,5 @@ Also, i found it pretty hard to understand how variables & callbacks were workin
 
 Last but not least, since i'm focusing only on web export, i wanted to add web-centric plugins so you can leverage everything a web browser can do as part of your Ink story. Date & time, weather, geolocation, showing maps, interactive elements, ... so your Ink story can be more personalized, interactive & modern.
 
-## Please, don't use it
-This really is a Work In Progress for now so honestly, you'd probably better wait a few weeks/months before using this library as part of your project...
+### Please, don't use it in production for now
+This really is a Work In Progress for now, you'd probably better wait a few weeks/months before using this library as part of your real project...
