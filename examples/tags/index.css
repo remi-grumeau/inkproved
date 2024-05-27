@@ -1,0 +1,47 @@
+#ink__story {
+    padding:        0 .5em;
+    background:     rgba(255,255,255,.9);
+}
+
+#ink__container p {
+    padding-right:      10%;
+}
+#ink__container p.ink__image,
+#ink__container p.ink__choice {
+    padding-right:      0;
+}
+#ink__container p:not(.ink__choice) {
+    border-top:         1px solid rgba(0,0,0,.2);
+}
+#ink__container p.me {
+    padding-left:       10%;
+    padding-right:      0%;
+    color:              #008ec3;
+    text-align:         right;
+}
+
+#ink__container p.blockquote {
+    padding:        4em 0;
+    color:          #aaa;
+    font-family:    serif;
+    text-align:     center;
+    font-style:     italic;
+}
+
+#ink__container p.peter {
+    padding:        .3em;
+    color:          #42a100;
+    font-style:     italic;
+}
+#ink__container p.steve {
+    padding:        .3em;
+    color:          #0d00a4;
+    text-align:     right;
+    font-style:     italic;
+}
+
+#ink__container p.hovering:hover {
+    color:          #fff;
+    background:     #000;
+    transition:     all 300ms ease-in-out;
+}

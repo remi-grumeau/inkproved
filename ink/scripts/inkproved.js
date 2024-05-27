@@ -44,17 +44,22 @@
     //  # PROPERTY: value
     // e.g. IMAGE: source path
     function _splitPropertyTag(tag) {
-        let propertySplitIdx = tag.indexOf(":");
-        if( propertySplitIdx != null ) {
-            let property = tag.substr(0, propertySplitIdx).trim();
-            let val = tag.substr(propertySplitIdx+1).trim();
-            return {
-                property: property,
-                val: val
-            };
+        let property,val=null;
+        let propertySplitIdx=tag.indexOf(":");
+        if(propertySplitIdx>-1)
+        {
+            property = tag.substr(0, propertySplitIdx).trim();
+            val = tag.substr(propertySplitIdx+1).trim();
+            if(val.substr(0,5)=='HTTPS')
+                val = 'https://'+val.substr(5);
         }
+        else
+            property = tag;
 
-        return null;
+        return {
+            property: property,
+            val: val
+        };
     }
 
     function _continueStory(firstTime) {
@@ -91,93 +96,138 @@
                 if(_INK.tagCallback && splitTag.property!='CLASS')
                     _INK.tagCallback(splitTag.property,splitTag.val);
 
-                // AUDIO: src
-                if( splitTag && (splitTag.property == "AUDIO" || splitTag.property == "AUDIOLOOP") ) {
-                  if('audio' in this) {
-                    this.audio.pause();
-                    this.audio.removeAttribute('src');
-                    this.audio.load();
-                  }
-                  this.audio = new Audio(splitTag.val);
-                  if(splitTag.property == "AUDIOLOOP")
-                    this.audio.loop = true;
-                  this.audio.play();
-                }
 
-                // IMAGE: src
-                if( splitTag && splitTag.property == "IMAGE" ) {
-                    let paragraphElement = _ce({'p':{'class':'image ink__hide'}});
-                    let imageElement = _ce({'img':{src:'assets/images/'+splitTag.val}});
-                    imageElement.addEventListener('load', function(el,delay){inkStoryContainer.style.height=_contentBottomEdgeY()+"px";_scrollDown(_contentBottomEdgeY())},false);
-                    paragraphElement.appendChild(imageElement);
-                    inkStoryContainer.appendChild(paragraphElement);
-
-                    _showAfter(delay, paragraphElement);
-                    delay += 200.0;
-                }
-
-                // VIDEO: src
-                if( splitTag && (splitTag.property == "VIDEO" || splitTag.property == "VIDEOLOOP") ) {
-                    let paragraphElement = _ce({'p':{'class':'image ink__hide'}});
-                    let videoElement = _ce({'video':{src:splitTag.val,autoplay:'true',loop:((splitTag.property == "VIDEOLOOP")?'true':'false')}});
-                    paragraphElement.appendChild(videoElement);
-                    inkStoryContainer.appendChild(paragraphElement);
-                    _showAfter(delay, paragraphElement);
-                    delay += 200.0;
-                }
-
-                // LINK: url
-                else if( splitTag && splitTag.property == "LINK" ) {
-                    window.location.href = splitTag.val;
-                }
-
-                // LINKOPEN: url
-                else if( splitTag && splitTag.property == "LINKOPEN" ) {
-                    window.open(splitTag.val);
-                }
-
-                // BACKGROUND: src
-                else if( splitTag && splitTag.property == "BACKGROUND" ) {
-                    inkContainer.style.backgroundImage = 'url('+splitTag.val+')';
-                }
-
-                // CLASS: className
-                else if( splitTag && splitTag.property == "CLASS" ) {
-                    customClasses.push(splitTag.val);
-                }
-
-                // CLEAR - removes all existing content.
-                // RESTART - clears everything and restarts the story from the beginning
-                else if( tag == "CLEAR" || tag == "RESTART" ) {
-                    _removeAll("p");
-                    _removeAll("img");
-                    _clearChoices();
-
-                    if( tag == "RESTART" ) {
-                        _restart();
-                        return;
-                    }
-                }
-                else
+                if(splitTag)
                 {
-                    // CHECK IF SOME PLUGIN MIGHT SUPPORT THIS TAG
-                    if(_INK.plugins[splitTag.property]!=undefined)
+                    // AUDIO: src
+                    if( splitTag.property == "AUDIO") {
+                        let srcVal = (splitTag.val.substr(0,5)=='https')?splitTag.val:'assets/sounds/'+splitTag.val;
+                        this.audio = new Audio(srcVal);
+                        this.audio.play();
+                    }
+
+                    // AUDIOLOOP: src
+                    else if( splitTag.property == "AUDIOLOOP" )
                     {
-                        if(_INK.plugins[splitTag.property].type=="element")
-                        {
-                            let pluginElement=false;
-                            if(pluginElement = _INK.plugins[splitTag.property].getElement(splitTag.val))
-                            {
-                                let paragraphElement = _ce({'p':{'class':splitTag.property.toLowerCase()+' ink__hide'}});
-                                paragraphElement.appendChild(pluginElement);
-                                inkStoryContainer.appendChild(paragraphElement);
-                                _showAfter(delay, paragraphElement);
-                                delay += 200.0;
-                            }
+                        let srcVal = (splitTag.val.substr(0,5)=='https')?splitTag.val:'assets/sounds/'+splitTag.val;
+
+                        if('audioloop' in this){
+                            this.audioloop.pause();
+                            this.audioloop.removeAttribute('src');
                         }
-                        else if(_INK.plugins[splitTag.property].type=="action")
+                        this.audioloop = new Audio(srcVal);
+                        this.audioloop.loop = true;
+                        this.audioloop.play();
+                    }
+                    // AUDIOLOOP: src
+                    else if( splitTag.property == "AUDIOLOOPSTOP" )
+                    {
+                        this.audioloop.pause();
+                    }
+
+                    // IMAGE: src
+                    else if( splitTag.property == "IMAGE" )
+                    {
+                        let srcVal = (splitTag.val.substr(0,5)=='https')?splitTag.val:'assets/images/'+splitTag.val;
+
+                        let paragraphElement = _ce({'p':{'class':'ink__image ink__hide'}});
+                        let imageElement = _ce({'img':{src:srcVal}});
+                        imageElement.addEventListener('load', function(){inkStoryContainer.style.height=_contentBottomEdgeY()+"px";_scrollDown(_contentBottomEdgeY())},false);
+                        imageElement.addEventListener('error', function(){this.setAttribute('src','assets/images/offline.jpg');},false);
+                        paragraphElement.appendChild(imageElement);
+                        inkStoryContainer.appendChild(paragraphElement);
+
+                        _showAfter(delay, paragraphElement);
+                        delay += 200.0;
+                    }
+
+                    // VIDEO: src
+                    else if( splitTag.property == "VIDEO" || splitTag.property == "VIDEOLOOP" )
+                    {
+                        let srcVal = (splitTag.val.substr(0,5)=='https')?splitTag.val:'assets/videos/'+splitTag.val;
+
+                        let paragraphElement = _ce({'p':{'class':'ink__video ink__hide'}});
+                        let videoElement = _ce({'video':{src:srcVal,autoplay:'true',inline:'true'}});
+                        if(splitTag.property == "VIDEOLOOP")
+                            videoElement.setAttribute('loop','');
+                        else
+                            videoElement.setAttribute('controls','');
+                        videoElement.addEventListener('canplay', function(){inkStoryContainer.style.height=_contentBottomEdgeY()+"px";_scrollDown(_contentBottomEdgeY())},false);
+                        paragraphElement.appendChild(videoElement);
+                        inkStoryContainer.appendChild(paragraphElement);
+
+                        _showAfter(delay, paragraphElement);
+                        delay += 200.0;
+                    }
+
+                    // IFRAME: src
+                    else if( splitTag.property == "IFRAME" )
+                    {
+                        let srcVal = (splitTag.val.substr(0,5)=='https')?splitTag.val:'assets/documents/'+splitTag.val;
+
+                        let paragraphElement = _ce({'p':{'class':'ink__iframe ink__hide'}});
+                        let iframeElement = _ce({'iframe':{src:srcVal,scrolling:'auto',frameborder:'0',seamless:'true'}});
+                        paragraphElement.appendChild(iframeElement);
+                        inkStoryContainer.appendChild(paragraphElement);
+
+                        _showAfter(delay, paragraphElement);
+                        delay += 200.0;
+                    }
+
+                    // LINK: url
+                    else if( splitTag.property == "LINK" ) {
+                        window.location.href = splitTag.val;
+                    }
+
+                    // LINKOPEN: url
+                    else if( splitTag.property == "LINKOPEN" ) {
+                        window.open(splitTag.val);
+                    }
+
+                    // BACKGROUND: src
+                    else if( splitTag.property == "BACKGROUND" ) {
+                        let srcVal = (splitTag.val.substr(0,5)=='https')?splitTag.val:'assets/backgrounds/'+splitTag.val;
+                        inkContainer.style.backgroundImage = 'url('+srcVal+')';
+                    }
+
+                    // CLASS: className
+                    else if( splitTag.property == "CLASS" ) {
+                        customClasses.push(splitTag.val);
+                    }
+
+                    // CLEAR - removes all existing content.
+                    // RESTART - clears everything and restarts the story from the beginning
+                    else if( tag == "CLEAR" || tag == "RESTART" ) {
+                        _removeAll("p");
+                        _removeAll("img");
+                        _clearChoices();
+
+                        if( tag == "RESTART" ) {
+                            _restart();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // CHECK IF SOME PLUGIN MIGHT SUPPORT THIS TAG
+                        if(_INK.plugins[splitTag.property]!=undefined)
                         {
-                            _INK.plugins[splitTag.property].setAction(splitTag.val);
+                            if(_INK.plugins[splitTag.property].type=="element")
+                            {
+                                let pluginElement=false;
+                                if(pluginElement = _INK.plugins[splitTag.property].getElement(splitTag.val))
+                                {
+                                    let paragraphElement = _ce({'p':{'class':splitTag.property.toLowerCase()+' ink__hide'}});
+                                    paragraphElement.appendChild(pluginElement);
+                                    inkStoryContainer.appendChild(paragraphElement);
+                                    _showAfter(delay, paragraphElement);
+                                    delay += 200.0;
+                                }
+                            }
+                            else if(_INK.plugins[splitTag.property].type=="action")
+                            {
+                                _INK.plugins[splitTag.property].setAction(splitTag.val);
+                            }
                         }
                     }
                 }
@@ -512,6 +562,16 @@
                 return _INK.story.variablesState[name];
             else
                 console.error('Variable '+name+' does not exists in this INK story');
+        },
+
+        setTheme : function(val)
+        {
+            if(!document.getElementById('ink_theme_file'))
+                document.getElementsByTagName('head')[0].innerHTML+='<link rel="stylesheet" id="ink_theme_file">';
+            if(val!='')
+                ink_theme_file.setAttribute('href','assets/themes/theme-'+val+'.css');
+            else
+                ink_theme_file.removeAttribute('href');
         }
     };
 

@@ -21,8 +21,9 @@ body {
     padding-bottom: 1em;
     overflow:       scroll;
     overflow-x:     hidden;
-    background-size:    cover;
-    background-repeat:  no-repeat;
+    background-position:    top left;
+    background-repeat:      repeat;
+    background-size:        20vw auto;
     -webkit-overflow-scrolling: touch;
     user-select:    none;
 }
@@ -62,7 +63,8 @@ body {
 #ink__container p {
     font-size:      1.2em;
     color:          #555;
-    line-height:    1.7em;
+    line-height:    1.4em;
+    padding:        .2em 0;
 }
 
 #ink__container strong {
@@ -75,7 +77,10 @@ body {
     display:    block;
     max-width:  100%;
 }
-
+#ink__container iframe {
+    width:      100%;
+    height:     20em;
+}
 
 
 #ink__container .ink__hide {
