@@ -176,6 +176,7 @@ Most are also available with standard Ink library, some are exclusive to Inkprov
 - Infinite possibilities :)
 
 * Sure does #CLASS: me
+    -> FINISH
 
 -> DONE
 
