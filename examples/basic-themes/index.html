@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Inkproved</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../ink/css/inkproved.css">
+</head>
+
+<body>
+
+    <div id="theme-selecter" style="position:fixed;top:0;right:0;padding:.3em;background:rgba(255,255,255,.7)">
+        <label for="theme_select" style="color:#222">Choose theme</label><br>
+        <select id="theme_select" style="color:#222" onchange="_INK.setTheme(this.value)">
+            <option value="">No theme</option>
+            <option value="dark">Dark theme</option>
+            <option value="sepia">Sepia theme</option>
+            <option value="starwars">Starwars theme</option>
+        </select>
+    </div>
+
+    <div id="ink__container">
+        <div id="ink__story"></div>
+    </div>
+
+    <script src="../../ink/scripts/ink.js"></script>
+    <script src="mystory.js"></script>
+    <script src="../../ink/scripts/inkproved.js"></script>
+
+    <script>_INK.loadStory(storyContent,true);</script>
+</body>
+</html>
