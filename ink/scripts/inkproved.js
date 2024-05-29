@@ -496,6 +496,12 @@
             _continueStory(true);
         },
 
+        gotoKnot : function(knot)
+        {
+            _INK.story.ChoosePathString(knot);
+            _continueStory(true);
+        },
+
         continue : function()
         {
             if(_INK.logging)
@@ -568,6 +574,14 @@
         {
             _INK.story.ObserveVariable(variableName, callbackFunction);
         },
+
+        setExternals : function(arrayOfFunctions)
+        {
+            for(let i=0,inb=arrayOfFunctions.length;i<inb;i++){
+                _INK.story.BindExternalFunction(arrayOfFunctions[i], window[arrayOfFunctions[i]], true);
+            }
+        },
+
 
         setTheme : function(val)
         {
