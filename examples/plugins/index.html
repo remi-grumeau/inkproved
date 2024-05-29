@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Inkproved - plugin Carrousel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../ink/css/inkproved.css">
+</head>
+
+<body>
+
+    <div id="ink__container">
+        <div id="ink__story"></div>
+    </div>
+
+    <script src="../../ink/scripts/ink.js"></script>
+    <script src="../../ink/scripts/inkproved.js"></script>
+    <script src="mystory.js"></script>
+
+    <script>
+    _INK.logging = true;
+    _INK.loadPlugin('carousel');
+    _INK.loadPlugin('vfx');
+    _INK.loadStory(storyContent,true);
+    </script>
+
+</body>
+</html>

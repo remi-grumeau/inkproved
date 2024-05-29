@@ -1,0 +1,13 @@
+#ink__container[data-vfx='grayscale'] {
+    filter: grayscale(1);
+}
+#ink__container[data-vfx='shake'] {
+    animation:  vfxShake 100ms linear 3;
+}
+@keyframes vfxShake {
+    0% { transform: translateX(1.5em); }
+    50% { transform: translateX(-1.2em); }
+    75% { transform: translateX(.7em); }
+    90% { transform: translateX(-.4em); }
+    100% { transform: translateX(0em); }
+}
