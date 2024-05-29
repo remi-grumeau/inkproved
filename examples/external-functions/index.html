@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Inkproved - External Functions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../ink/css/inkproved.css">
+    <style>
+    #ink__story p.action {
+        padding:    3em 0;
+        text-align: center;
+        color:      #ccc;
+        font-family: serif;
+        font-style: italic;
+    }
+    #ink__story.shake {
+        animation: shake 100ms linear 3;
+    }
+    @keyframes shake {
+        0% { transform: translateX(2em) }
+        50% { transform: translateX(-2em) }
+        75% { transform: translateX(-1em) }
+        90% { transform: translateX(-0.5em) }
+        100% { transform: translateX(0) }
+    }
+    </style>
+</head>
+
+<body>
+
+    <div id="ink__container">
+        <div id="ink__story"></div>
+    </div>
+
+    <div id="log" style="padding-top:1em;text-align:center;border-top:1px solid #aaa"></div>
+    <div style="text-align:center"><button id="wakeup_button" onclick="_INK.gotoKnot('WAKEUP')">Wake up! (going to knot WAKEUP)</button></div>
+
+    <script src="../../ink/scripts/ink.js"></script>
+    <script src="mystory.js"></script>
+    <script src="../../ink/scripts/inkproved.js"></script>
+
+    <script>
+    // USED BY INK AS EXTERNAL FUNCTIONS
+    // EX : TRIGGER ~{_getDay()} IN INK, IT TRIGGERS _getDay HERE AND RETURNS TODAY'S NAME IN INK
+    function _getDay()
+    {
+        console.log('ink asked for today');
+        let _daysName = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+        return _daysName[new Date().getDay()];
+    }
+
+    function _getDaytime()
+    {
+        console.log('ink asked for day time');
+        let _hour = new Date().getHours();
+        if(_hour<=6 || _hour>=20)
+            return 'night';
+        else if(_hour<12)
+            return 'morning';
+        else if(_hour<14)
+            return 'noon';
+        else if(_hour<20)
+            return 'afternoon';
+    }
+
+    function _getHour()
+    {
+        console.log('ink asked for hour');
+        return new Date().getHours();
+    }
+
+    function _getTemperature()
+    {
+        console.log('ink asked for player’s location temperature');
+        // GET PLAYER GPS POSITION
+        let _lat = 51.4839874;
+        let _lng = -0.6062766;
+        if (navigator.geolocation)
+        {
+            navigator.geolocation.getCurrentPosition(function(position){
+                _lat = position.coords.latitude;
+                _lng = position.coords.longitude;
+                getTemp();
+            })
+        } else {
+            // CANNOT USE PLAYER GEOLOCATION SO USING DEFAULT POSITION (WINDSOR CASTLE)
+            getTemp();
+        }
+
+        // ASK INTERNET FREE OPENSOURCE API AND GET TEMPERATURE FOR A GIVEN POSITION IN °C
+        // SINCE FETCH IS ASYNCRONOUS, RETURN COMES A FEW MILLISECONDS LATER SO INK DOESNT GET THE RETURN
+        // SO WE USE _INK.setVariable TO SET THE VARIABLE WHEN FETCH GETS A CALLBACK
+        function getTemp(){
+            fetch('https://api.open-meteo.com/v1/forecast?latitude='+_lat+'&longitude='+_lng+'&current=temperature')
+            .then(response => response.json())
+            .then(response => { _INK.setVariable('_temperature',response.current.temperature) })
+            .catch(error => console.log("Weather API error : " + error));
+        }
+    }
+
+
+    function _setPlayerStatus(status)
+    {
+        console.log('ink triggers the setPlayerStatus function as '+status);
+        document.getElementById('log').innerHTML += "<p>Player is now : "+status+"</p>";
+
+        // SHOWING/HIDING THE WAKE UP BUTTON
+        document.getElementById('wakeup_button').style.display = (status=='sleeping')?'':'none';
+    }
+
+    function _setEffect(effectName){
+        document.getElementById('ink__story').className = effectName;
+    }
+
+
+
+
+    // FIRST LOAD STORY WITH AUTOSTART TO FALSE
+    _INK.loadStory(storyContent,false);
+
+    // MAKES THE BINDING BETWEEN INK AND JAVASCRIPT
+    // BOTH DOESN'T HAVE TO BE NAMED LIKEWISE - THIS BINDING DOES THE LINK
+    _INK.setExternals(["_getDay","_getDaytime","_getHour","_getTemperature","_setPlayerStatus","_setEffect"]);
+
+    // NOW START INK STORY
+    _INK.start();
+
+    </script>
+
+
+</body>
+</html>
