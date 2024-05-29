@@ -132,7 +132,7 @@
 
                         let paragraphElement = _ce({'p':{'class':'ink__image ink__hide'}});
                         let imageElement = _ce({'img':{src:srcVal}});
-                        imageElement.addEventListener('load', function(){inkStoryContainer.style.height=_contentBottomEdgeY()+"px";_scrollDown(_contentBottomEdgeY())},false);
+                        imageElement.addEventListener('load', function(){_INK.resizeContentContainer()},false);
                         imageElement.addEventListener('error', function(){this.setAttribute('src','assets/images/offline.jpg');},false);
                         paragraphElement.appendChild(imageElement);
                         inkStoryContainer.appendChild(paragraphElement);
@@ -152,7 +152,7 @@
                             videoElement.setAttribute('loop','');
                         else
                             videoElement.setAttribute('controls','');
-                        videoElement.addEventListener('canplay', function(){inkStoryContainer.style.height=_contentBottomEdgeY()+"px";_scrollDown(_contentBottomEdgeY())},false);
+                        videoElement.addEventListener('canplay', function(){_INK.resizeContentContainer()},false);
                         paragraphElement.appendChild(videoElement);
                         inkStoryContainer.appendChild(paragraphElement);
 
@@ -212,7 +212,7 @@
                         // CHECK IF SOME PLUGIN MIGHT SUPPORT THIS TAG
                         if(_INK.plugins[splitTag.property]!=undefined)
                         {
-                            if(_INK.plugins[splitTag.property].type=="element")
+                            if(_INK.plugins[splitTag.property].type()=="element")
                             {
                                 let pluginElement=false;
                                 if(pluginElement = _INK.plugins[splitTag.property].getElement(splitTag.val))
@@ -224,7 +224,7 @@
                                     delay += 200.0;
                                 }
                             }
-                            else if(_INK.plugins[splitTag.property].type=="action")
+                            else if(_INK.plugins[splitTag.property].type()=="action")
                             {
                                 _INK.plugins[splitTag.property].setAction(splitTag.val);
                             }
@@ -471,6 +471,8 @@
             }
         },
 
+        resizeContentContainer : function() { _resizeContentContainer() },
+
         reload : function()
         {
             _removeAll("p");
@@ -570,9 +572,11 @@
                 console.error('Variable '+name+' does not exists in this INK story');
         },
 
-        listenVariable : function(variableName, callbackFunction)
+        listenVariables : function(arrayOfFunctions)
         {
-            _INK.story.ObserveVariable(variableName, callbackFunction);
+            for(let i=0,inb=arrayOfFunctions.length;i<inb;i++){
+                _INK.story.ObserveVariable(arrayOfFunctions[i], window[arrayOfFunctions[i]]);
+            }
         },
 
         setExternals : function(arrayOfFunctions)
@@ -591,6 +595,25 @@
                 ink_theme_file.setAttribute('href','assets/themes/theme-'+val+'.css');
             else
                 ink_theme_file.removeAttribute('href');
+        },
+
+        loadPlugin : function(pluginName)
+        {
+            if(!document.getElementById('ink_plugin_'+pluginName))
+            {
+                let pluginScript = document.createElement('script');
+                pluginScript.id = 'ink_plugin_'+pluginName;
+                pluginScript.type='text/javascript';
+                pluginScript.src='ink/plugins/'+pluginName+'/ink-'+pluginName+'.js';
+                document.head.appendChild(pluginScript);
+                if(_INK.logging)
+                    console.log('INK :: Load plugin '+pluginName);
+            }
+            else
+            {
+                if(_INK.logging)
+                    console.info('INK :: plugin '+pluginName+' already loaded');
+            }
         }
     };
 
