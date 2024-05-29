@@ -32,61 +32,45 @@
     // FIRST LOAD STORY WITH AUTOSTART TO FALSE
     _INK.loadStory(storyContent,false);
 
+    // SET VARIABLES IN INK
+
+        // FIRST, SET THE CURRENT DAY
+        let _daysName = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+        let _dayName  = _daysName[new Date().getDay()];
+        _INK.setVariable("_day", _dayName );
+
+
+        // SECOND SET THE DAY TIME BASED ON THE ACTUAL HOUR
+        let _daytime,_hour = new Date().getHours();
+        if(_hour<=6 || _hour>=20)
+            _daytime = 'night';
+        else if(_hour<12)
+            _daytime = 'morning';
+        else if(_hour<14)
+            _daytime = 'noon';
+        else if(_hour<20)
+            _daytime = 'afternoon';
+        _INK.setVariable("_daytime",_daytime);
+
+
+        _INK.setVariable('_temperature',15);
 
 
     // SET LISTENERS ON VARIABLES
-    _INK.listenVariable('_whereAmI',function(varName, newValue){
-        document.getElementById('log').innerHTML += '<p>WhereAmI variable got updated in Ink to : '+newValue+'</p>';
-    });
+    _INK.listenVariables(['_whereAmI']);
+
+    // START INK STORY NOW THAT ALL VARIABLES ARE SET
+    _INK.start();
+
+
+    // WILL BE TRIGGERED EVERYTIME THE VARIABLE WITH THE SAME NAME IS MODIFIED IN INK
+    function _whereAmI(varName,newValue){
+        document.getElementById('log').innerHTML += '<p>'+varName+' variable got updated in Ink to : '+newValue+'</p>';
+    }
 
     function logVariable(variableName){
         document.getElementById('log').innerHTML += '<p>'+variableName+' variable value is : '+_INK.getVariable(variableName)+'</p>';
     }
-
-
-
-    // SET VARIABLES IN INK
-
-    // FIRST, SET THE CURRENT DAY
-    let _daysName = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-    let _dayName  = _daysName[new Date().getDay()];
-    _INK.setVariable("_day", _dayName );
-
-
-    // SECOND SET THE DAY TIME BASED ON THE ACTUAL HOUR
-    let _daytime,_hour = new Date().getHours();
-    if(_hour<=6 || _hour>=20)
-        _daytime = 'night';
-    else if(_hour<12)
-        _daytime = 'morning';
-    else if(_hour<14)
-        _daytime = 'noon';
-    else if(_hour<20)
-        _daytime = 'afternoon';
-
-    _INK.setVariable("_daytime",_daytime);
-
-
-    // LAST GET THE REAL TEMPERATURE FOR A GIVEN POSITION (HERE WINDSOR CASTLE IN THE UK)
-    // SINCE FETCH IS ASYNCRONOUS, CALL IS NOT BLOCKING THE REST BUT RETURN COMES A FEW MILLISECONDS LATER
-    // SO WE USE _INK.setVariable TO SET THE VARIABLE WHEN FETCH GETS ITS CALLBACK
-    const _lat = 51.4839874;
-    const _lng = -0.6062766;
-    fetch('https://api.open-meteo.com/v1/forecast?latitude='+_lat+'&longitude='+_lng+'&current=temperature')
-    .then(response => response.json())
-    .then(response => {
-        _INK.setVariable('_temperature',response.current.temperature);
-
-        // START INK STORY ONLY WHEN THE SERVER GAVE THE TEMPERATURE BACK
-        _INK.start();
-    })
-    .catch(error => {
-        alert("Online weather api error : " + error + " (offline ?)");
-
-        // START INK STORY ANYWAY, KEEPING THE 0 DEFAULT VALUE AS A TEMPERATURE
-        _INK.start();
-    });
-
 
     </script>
 
