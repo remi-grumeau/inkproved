@@ -564,6 +564,11 @@
                 console.error('Variable '+name+' does not exists in this INK story');
         },
 
+        listenVariable : function(variableName, callbackFunction)
+        {
+            _INK.story.ObserveVariable(variableName, callbackFunction);
+        },
+
         setTheme : function(val)
         {
             if(!document.getElementById('ink_theme_file'))
