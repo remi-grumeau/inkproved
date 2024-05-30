@@ -185,9 +185,13 @@ _INK.loadPlugin('pluginName');
 
 So when loading a plugin, it loads the main plugin Javascript file called **pluginName/ink-pluginName.js**. Using ```_INK.loadPlugin('vfx');``` includes the file *ink/plugins/vfx/ink-vfx.js*.
 
-If your plugin needs extra Javascript or CSS files to be included, load them within this script. Then you must put you plugin object inside **_INK.plugins** using **THE SAME NAME** of the tag you want to use in your Ink story. For VFX, it creates a **_INK.plugins.VFX** object.
+If your plugin needs extra Javascript or CSS files to be included, load them within this script.
+
+Then you must put you plugin object inside **_INK.plugins** using ***THE SAME NAME*** of the tag you want to use in your Ink story. For VFX, everything is in **_INK.plugins.VFX** and you can call it in your *Ink* story using ``` #VFX: shake ```.
 
 There is two type of plugins: **element** and **action**. Both should have a ```type()``` method, returning this type as a string. An element plugin must have a ```getElement()``` method for *Inkproved* to get the content to insert in the story flow. An action plugin must have a ```setAction()``` method for *Inkproved* to trigger.
+
+Note that *Inkproved* passes the parameter directly to ```getElement(param)``` or ```setAction(param)``` so it's up to you how you deal with it. For VFX, i choose to use comma for extra parameters. So i use ```#VFX: shake``` to apply an animation, but ```#VFX: grayscale,1``` or ```#VFX: grayscale,0``` to set the grayscale filter level.
 
 And that's pretty much it, just open the files, it's pretty simple.
 
